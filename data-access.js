@@ -48,6 +48,20 @@ async function getCustomerById(id) {
     }
 }
 
+async function updateCustomer(updatedCustomer) {
+    try {
+        const filter = { "id": updatedCustomer.id };
+        const setData = { $set: updatedCustomer };
+        const updateResult = 
+        await collection.updateOne(filter, setData);
+        // return array [message, errMessage]
+        return ["one record updated", null];
+    } catch (err) {
+        console.log(err.message);
+        return [ null, err.message];
+    }
+}
+
 async function resetCustomers() {
     let data = [{ "id": 0, "name": "Mary Jackson", "email": "maryj@abc.com", "password": "maryj" },
     { "id": 1, "name": "Karen Addams", "email": "karena@abc.com", "password": "karena" },
@@ -66,5 +80,5 @@ async function resetCustomers() {
 }
 
 dbStartup();
-module.exports = { getCustomers, resetCustomers, addCustomer, getCustomerById };
+module.exports = { getCustomers, resetCustomers, addCustomer, getCustomerById, updateCustomer };
 
