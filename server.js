@@ -46,6 +46,18 @@ app.post('/customers', async (req, res) => {
     }
 });
 
+app.get("/customers/:id", async (req, res) => {
+     const id = req.params.id;
+     // return array [customer, errMessage]
+     const [cust, err] = await da.getCustomerById(id);
+     if(cust){
+         res.send(cust);
+     }else{
+         res.status(404);
+         res.send(err);
+     }   
+});
+
 app.get("/reset", async (req, res) => {
     const [result, err] = await da.resetCustomers();
     if(result){
