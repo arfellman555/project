@@ -3,10 +3,13 @@ const express = require('express');
 const path = require('path');  // for handling file paths
 const da = require("./data-access");  // data access module
 const bodyParser = require('body-parser');  // for parsing JSON request bodies
-const { validateApiKey } = require('./security');  // import API key middleware
+const { validateApiKey, validateApiKeyExists } = require('./security');  // import API key middleware
 
 const app = express();
 const port = process.env.PORT || 4000;  // use env var or default to 4000
+
+// Validate API key exists on startup
+validateApiKeyExists();
 
 app.use(bodyParser.json());  // middleware to parse JSON bodies
 
