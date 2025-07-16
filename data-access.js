@@ -48,17 +48,22 @@ async function getCustomerById(id) {
     }
 }
 
-async function updateCustomer(updatedCustomer) {
+async function updateCustomer(id, updatedCustomer) {
     try {
-        const filter = { "id": updatedCustomer.id };
+        const filter = { "id": +id };
         const setData = { $set: updatedCustomer };
-        const updateResult = 
-        await collection.updateOne(filter, setData);
+        const updateResult = await collection.updateOne(filter, setData);
+        
+        // Check if any document was actually updated
+        if (updateResult.matchedCount === 0) {
+            return [null, "customer not found"];
+        }
+        
         // return array [message, errMessage]
         return ["one record updated", null];
     } catch (err) {
         console.log(err.message);
-        return [ null, err.message];
+        return [null, err.message];
     }
 }
 

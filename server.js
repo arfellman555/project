@@ -28,7 +28,7 @@ app.get("/customers", async (req, res) => {
 
 app.post('/customers', async (req, res) => {
     const newCustomer = req.body;
-    if (newCustomer === null || req.body === {}) {
+    if (!newCustomer || Object.keys(newCustomer).length === 0) {
         res.status(400);
         res.send("missing request body");
     } else {
@@ -61,17 +61,17 @@ app.get("/customers/:id", async (req, res) => {
 app.put('/customers/:id', async (req, res) => {
     const id = req.params.id;
     const updatedCustomer = req.body;
-    if (updatedCustomer === null || req.body === {}) {
+    if (!updatedCustomer || Object.keys(updatedCustomer).length === 0) {
         res.status(400);
         res.send("missing request body");
     } else {
         delete updatedCustomer._id;
         // return array format [message, errMessage]
-        const [message, errMessage] = await da.updateCustomer(updatedCustomer);
+        const [message, errMessage] = await da.updateCustomer(id, updatedCustomer);
         if (message) {
             res.send(message);
         } else {
-            res.status(400);
+            res.status(404);
             res.send(errMessage);
         }
     }
