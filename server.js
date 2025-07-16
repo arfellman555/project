@@ -9,6 +9,21 @@ const port = process.env.PORT || 4000;  // use env var or default to 4000
 
 app.use(bodyParser.json());  // middleware to parse JSON bodies
 
+// API Key middleware function
+function validateApiKey(req, res, next) {
+    const apiKey = req.headers['x-api-key'];
+    
+    if (!apiKey) {
+        return res.status(401).send("API Key is missing");
+    }
+    
+    if (apiKey !== process.env.API_KEY) {
+        return res.status(403).send("API Key is invalid");
+    }
+    
+    next();
+}
+
 // Set the static directory to serve files from
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -16,7 +31,7 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-app.get("/customers", async (req, res) => {
+app.get("/customers", validateApiKey, async (req, res) => {
      const [cust, err] = await da.getCustomers();
      if(cust){
          res.send(cust);
@@ -26,7 +41,7 @@ app.get("/customers", async (req, res) => {
      }   
 });
 
-app.post('/customers', async (req, res) => {
+app.post('/customers', validateApiKey, async (req, res) => {
     const newCustomer = req.body;
     if (!newCustomer || Object.keys(newCustomer).length === 0) {
         res.status(400);
@@ -46,7 +61,7 @@ app.post('/customers', async (req, res) => {
     }
 });
 
-app.get("/customers/:id", async (req, res) => {
+app.get("/customers/:id", validateApiKey, async (req, res) => {
      const id = req.params.id;
      // return array [customer, errMessage]
      const [cust, err] = await da.getCustomerById(id);
@@ -58,7 +73,7 @@ app.get("/customers/:id", async (req, res) => {
      }   
 });
 
-app.put('/customers/:id', async (req, res) => {
+app.put('/customers/:id', validateApiKey, async (req, res) => {
     const id = req.params.id;
     const updatedCustomer = req.body;
     if (!updatedCustomer || Object.keys(updatedCustomer).length === 0) {
@@ -77,7 +92,7 @@ app.put('/customers/:id', async (req, res) => {
     }
 });
 
-app.delete("/customers/:id", async (req, res) => {
+app.delete("/customers/:id", validateApiKey, async (req, res) => {
     const id = req.params.id;
     // return array [message, errMessage]
     const [message, errMessage] = await da.deleteCustomerById(id);
