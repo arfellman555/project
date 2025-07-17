@@ -24,7 +24,7 @@ function validateApiKeyExists() {
 
 // API Key middleware function
 function validateApiKey(req, res, next) {
-    const apiKey = req.headers['x-api-key'];
+    const apiKey = req.query.api_key || req.headers['x-api-key'];
     const serverApiKey = getApiKey();
     
     if (!apiKey) {
