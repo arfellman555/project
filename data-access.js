@@ -25,6 +25,13 @@ async function getCustomers() {
 
 async function addCustomer(newCustomer) {
     try {
+        // Check if a customer with the same email already exists
+        const existingCustomer = await collection.findOne({"email": newCustomer.email});
+        if (existingCustomer) {
+            // return array [status, id, errMessage]
+            return ["fail", null, "Customer with this email already exists"];
+        }
+        
         const insertResult = await collection.insertOne(newCustomer);
         // return array [status, id, errMessage]
         return ["success", insertResult.insertedId, null];
