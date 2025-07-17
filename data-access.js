@@ -108,6 +108,17 @@ async function resetCustomers() {
     }
 }
 
+async function findCustomers(filter) {
+    try {
+        const customers = await collection.find(filter).toArray();
+        // return array [customers, errMessage]
+        return [customers, null];
+    } catch (err) {
+        console.log(err.message);
+        return [null, err.message];
+    }
+}
+
 dbStartup();
-module.exports = { getCustomers, resetCustomers, addCustomer, getCustomerById, updateCustomer, deleteCustomerById };
+module.exports = { getCustomers, resetCustomers, addCustomer, getCustomerById, updateCustomer, deleteCustomerById, findCustomers };
 
